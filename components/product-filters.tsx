@@ -8,7 +8,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Label } from '@/components/ui/label';
 import { PRICE_RANGES } from '@/lib/api';
 import { Category } from '@/types/product';
-import { Filter, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface ProductFiltersProps {
@@ -28,7 +28,7 @@ export default function ProductFilters({
   onPriceRangeChange,
   onClearFilters,
 }: ProductFiltersProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleCategoryChange = (categoryId: number, checked: boolean) => {
     if (checked) {
@@ -57,21 +57,35 @@ export default function ProductFilters({
   const hasActiveFilters = selectedCategories.length > 0 || selectedPriceRanges.length > 0;
 
   return (
-    <Card className="p-6 h-fit">
+    <Card className="p-4 h-fit lg:sticky lg:top-4 transition-all duration-300">
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <div className="flex items-center justify-between mb-4">
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="p-0 h-auto font-semibold text-lg">
-              <Filter className="w-5 h-5 mr-2" />
-              Filters
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center justify-between"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              <span className="flex items-center">
+                <Filter className="w-4 h-4 mr-2" />
+                {isOpen ? 'Hide Filters' : 'Show Filters'}
+              </span>
+              {isOpen ? (
+                <ChevronUp className="w-4 h-4 ml-2" />
+              ) : (
+                <ChevronDown className="w-4 h-4 ml-2" />
+              )}
             </Button>
           </CollapsibleTrigger>
-          {hasActiveFilters && (
-            <Button variant="outline" size="sm" onClick={onClearFilters}>
+        </div>
+
+        {hasActiveFilters && (
+          <div className="mb-4 flex items-center justify-end">
+            <Button variant="ghost" size="sm" onClick={onClearFilters}>
               Clear All
             </Button>
-          )}
-        </div>
+          </div>
+        )}
 
         <CollapsibleContent className="space-y-6">
           {hasActiveFilters && (

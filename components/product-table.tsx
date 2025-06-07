@@ -169,13 +169,13 @@ export default function ProductTable({
       </div>
 
       <div className="lg:col-span-3 space-y-6">
-        <div className="relative">
+        <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="Search products by title or description..."
+            placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => handleSearch(e.target.value)}
-            className="pl-10 pr-10"
+            className="pl-10 pr-10 w-full"
           />
           {searchTerm && (
             <button
@@ -187,7 +187,7 @@ export default function ProductTable({
           )}
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <p className="text-sm text-muted-foreground">
             {loading ? (
               "Searching products..."
@@ -215,12 +215,12 @@ export default function ProductTable({
             </div>
           </div>
         ) : (
-          <div className="rounded-md border">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">Image</TableHead>
-                  <TableHead>
+                  <TableHead className="w-[100px] min-w-[100px]">Image</TableHead>
+                  <TableHead className="min-w-[200px]">
                     <Button
                       variant="ghost"
                       onClick={() => handleSort('title')}
@@ -230,8 +230,8 @@ export default function ProductTable({
                       {getSortIcon('title')}
                     </Button>
                   </TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>
+                  <TableHead className="min-w-[120px]">Category</TableHead>
+                  <TableHead className="min-w-[100px]">
                     <Button
                       variant="ghost"
                       onClick={() => handleSort('price')}
@@ -241,13 +241,13 @@ export default function ProductTable({
                       {getSortIcon('price')}
                     </Button>
                   </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedProducts.map((product) => (
                   <TableRow key={product.id}>
-                    <TableCell>
+                    <TableCell className="min-w-[100px]">
                       <div className="relative w-16 h-16 rounded-md overflow-hidden bg-gray-100">
                         {product.images && product.images.length > 0 ? (
                           <Image
@@ -255,7 +255,7 @@ export default function ProductTable({
                             alt={product.title}
                             fill
                             className="object-cover"
-                            sizes="64px"
+                            sizes="(max-width: 768px) 64px, 64px"
                           />
                         ) : (
                           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -264,27 +264,27 @@ export default function ProductTable({
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="min-w-[200px]">
                       <div>
-                        <h3 className="font-medium">{product.title}</h3>
+                        <h3 className="font-medium line-clamp-1">{product.title}</h3>
                         <p className="text-sm text-muted-foreground line-clamp-2">
                           {product.description}
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
+                    <TableCell className="min-w-[120px]">
+                      <Badge variant="outline" className="whitespace-nowrap">
                         {product.category.name}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium min-w-[100px]">
                       ${product.price.toFixed(2)}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right min-w-[100px]">
                       <Link href={`/products/${product.id}`}>
-                        <Button size="sm" className="flex items-center space-x-1">
+                        <Button size="sm" className="flex items-center space-x-1 whitespace-nowrap">
                           <Eye className="w-4 h-4" />
-                          <span>View</span>
+                          <span className="hidden sm:inline">View</span>
                         </Button>
                       </Link>
                     </TableCell>
@@ -296,35 +296,45 @@ export default function ProductTable({
         )}
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-center space-x-2">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <Button 
               variant="outline" 
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              className="whitespace-nowrap"
             >
               Previous
             </Button>
             
-            {[...Array(Math.min(5, totalPages))].map((_, i) => {
-              const pageNum = Math.max(1, currentPage - 2) + i;
-              if (pageNum > totalPages) return null;
-              
-              return (
-                <Button 
-                  key={pageNum}
-                  variant={currentPage === pageNum ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setCurrentPage(pageNum)}
-                >
-                  {pageNum}
-                </Button>
-              );
-            })}
+            <div className="hidden sm:flex items-center gap-2">
+              {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                const pageNum = Math.max(1, currentPage - 2) + i;
+                if (pageNum > totalPages) return null;
+                
+                return (
+                  <Button 
+                    key={pageNum}
+                    variant={currentPage === pageNum ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(pageNum)}
+                  >
+                    {pageNum}
+                  </Button>
+                );
+              })}
+            </div>
+
+            <div className="sm:hidden flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </span>
+            </div>
             
             <Button 
               variant="outline" 
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              className="whitespace-nowrap"
             >
               Next
             </Button>

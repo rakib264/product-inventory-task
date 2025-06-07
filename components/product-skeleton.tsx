@@ -11,36 +11,36 @@ import {
 export function ProductTableSkeleton() {
   return (
     <>
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Image</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="w-[100px] min-w-[100px]">Image</TableHead>
+              <TableHead className="min-w-[200px]">Product</TableHead>
+              <TableHead className="min-w-[120px]">Category</TableHead>
+              <TableHead className="min-w-[100px]">Price</TableHead>
+              <TableHead className="text-right min-w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {[...Array(10)].map((_, i) => (
               <TableRow key={i}>
-                <TableCell>
+                <TableCell className="min-w-[100px]">
                   <Skeleton className="h-16 w-16 rounded-md" />
                 </TableCell>
-                <TableCell>
+                <TableCell className="min-w-[200px]">
                   <div className="space-y-2">
-                    <Skeleton className="h-4 w-[250px]" />
-                    <Skeleton className="h-4 w-[200px]" />
+                    <Skeleton className="h-4 w-full max-w-[250px]" />
+                    <Skeleton className="h-4 w-full max-w-[200px]" />
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="min-w-[120px]">
                   <Skeleton className="h-6 w-[100px]" />
                 </TableCell>
-                <TableCell>
+                <TableCell className="min-w-[100px]">
                   <Skeleton className="h-4 w-[80px]" />
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right min-w-[100px]">
                   <Skeleton className="h-9 w-[100px] ml-auto" />
                 </TableCell>
               </TableRow>
