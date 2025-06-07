@@ -24,14 +24,12 @@ import { ProductTableSkeleton } from './product-skeleton';
 interface ProductTableProps {
   initialProducts: Product[];
   categories: Category[];
-  currentPage: number;
   itemsPerPage: number;
 }
 
 export default function ProductTable({
   initialProducts,
   categories,
-  currentPage,
   itemsPerPage,
 }: ProductTableProps) {
   const router = useRouter();
@@ -42,6 +40,7 @@ export default function ProductTable({
   const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'title' | 'price'>('title');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
@@ -79,15 +78,13 @@ export default function ProductTable({
   const handleSearch = async (term: string) => {
     const trimmedTerm = term.trim();
     setSearchTerm(trimmedTerm);
+    setCurrentPage(1); 
     
     if (trimmedTerm) {
       setLoading(true);
       try {
         const searchResults = await searchProducts(trimmedTerm);
         setProducts(searchResults);
-        if (currentPage !== 1) {
-          router.push('/');
-        }
       } catch (error) {
         console.error('Search failed:', error);
       } finally {
@@ -95,18 +92,13 @@ export default function ProductTable({
       }
     } else {
       setProducts(initialProducts);
-      if (currentPage !== 1) {
-        router.push('/');
-      }
     }
   };
 
   const handleClearSearch = () => {
     setSearchTerm('');
     setProducts(initialProducts);
-    if (currentPage !== 1) {
-      router.push('/');
-    }
+    setCurrentPage(1);
   };
 
   const applyFilters = async () => {
@@ -305,39 +297,37 @@ export default function ProductTable({
 
         {totalPages > 1 && (
           <div className="flex items-center justify-center space-x-2">
-            <Link href={`/?page=${Math.max(1, currentPage - 1)}`}>
-              <Button 
-                variant="outline" 
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            >
+              Previous
+            </Button>
             
             {[...Array(Math.min(5, totalPages))].map((_, i) => {
               const pageNum = Math.max(1, currentPage - 2) + i;
               if (pageNum > totalPages) return null;
               
               return (
-                <Link key={pageNum} href={`/?page=${pageNum}`}>
-                  <Button 
-                    variant={currentPage === pageNum ? "default" : "outline"}
-                    size="sm"
-                  >
-                    {pageNum}
-                  </Button>
-                </Link>
+                <Button 
+                  key={pageNum}
+                  variant={currentPage === pageNum ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(pageNum)}
+                >
+                  {pageNum}
+                </Button>
               );
             })}
             
-            <Link href={`/?page=${Math.min(totalPages, currentPage + 1)}`}>
-              <Button 
-                variant="outline" 
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            >
+              Next
+            </Button>
           </div>
         )}
       </div>

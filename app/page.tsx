@@ -3,20 +3,10 @@ import ProductTable from '@/components/product-table';
 import { getCategories, getProducts } from '@/lib/api';
 import { Suspense } from 'react';
 
-interface HomeProps {
-  searchParams: {
-    page?: string;
-  };
-}
-
-export default async function Home({ searchParams }: HomeProps) {
-  const currentPage = parseInt(searchParams.page || '1');
-  const itemsPerPage = 10;
-  const offset = (currentPage - 1) * itemsPerPage;
-
+export default async function Home() {
   try {
     const [products, categories] = await Promise.all([
-      getProducts(offset, itemsPerPage * 6),
+      getProducts(0, 100),
       getCategories(),
     ]);
 
@@ -33,8 +23,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <ProductTable
             initialProducts={products}
             categories={categories}
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
+            itemsPerPage={10}
           />
         </Suspense>
       </div>

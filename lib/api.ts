@@ -14,7 +14,6 @@ export async function getProducts(
 ): Promise<Product[]> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/products?offset=${offset}&limit=${limit}`, {
-      cache: 'force-cache',
       next: { revalidate: 3600 }
     });
     
@@ -32,7 +31,6 @@ export async function getProducts(
 export async function getProductById(id: string): Promise<Product> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/products/${id}`, {
-      cache: 'force-cache',
       next: { revalidate: 3600 }
     });
     
